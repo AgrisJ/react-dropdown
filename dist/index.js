@@ -115,6 +115,23 @@ function (_Component) {
       }
     }
   }, {
+		key: "handleTouchEnd",
+		value: function handleTouchEnd(event) {
+      if (this.props.onFocus && typeof this.props.onFocus === 'function') {
+        this.props.onFocus(this.state.isOpen);
+      }
+
+			if (event.type === 'touchend' && event.button !== 0) return;
+      event.stopPropagation();
+      event.preventDefault();
+
+      if (!this.props.disabled) {
+        this.setState({
+          isOpen: !this.state.isOpen
+        });
+      }
+    }
+  }, {
     key: "parseValue",
     value: function parseValue(value, options) {
       var option;
@@ -173,7 +190,7 @@ function (_Component) {
       var classes = (_classes = {}, _defineProperty(_classes, "".concat(this.props.baseClassName, "-option"), true), _defineProperty(_classes, option.className, !!option.className), _defineProperty(_classes, 'is-selected', isSelected), _classes);
       var optionClass = (0, _classnames["default"])(classes);
       return _react["default"].createElement("div", {
-        key: value,
+				key: option.key || value, // To make keys work for React elements as well
         className: optionClass,
         onMouseDown: this.setValue.bind(this, value, label),
         onClick: this.setValue.bind(this, value, label),
@@ -190,6 +207,7 @@ function (_Component) {
           options = _this$props.options,
           baseClassName = _this$props.baseClassName;
       var ops = options.map(function (option) {
+				
         if (option.type === 'group') {
           var groupTitle = _react["default"].createElement("div", {
             className: "".concat(baseClassName, "-title")
@@ -205,7 +223,8 @@ function (_Component) {
             role: "listbox",
             tabIndex: "-1"
           }, groupTitle, _options);
-        } else {
+				} 
+				else {
           return _this2.renderOption(option);
         }
       });
@@ -267,7 +286,7 @@ function (_Component) {
       }, _react["default"].createElement("div", {
         className: controlClass,
         onMouseDown: this.handleMouseDown.bind(this),
-        onTouchEnd: this.handleMouseDown.bind(this),
+				onTouchEnd: this.handleTouchEnd.bind(this),
         "aria-haspopup": "listbox"
       }, value, _react["default"].createElement("div", {
         className: "".concat(baseClassName, "-arrow-wrapper")
